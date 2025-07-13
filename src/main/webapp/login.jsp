@@ -5,6 +5,16 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+<%
+    String success = request.getParameter("success");
+    if ("true".equals(success)) {
+%>
+<script>
+    alert("Registration successful! Please log in to continue.");
+</script>
+<%
+    }
+%>
 <% if (request.getAttribute("message") != null) { %>
 <div style="color: red;"><%= request.getAttribute("message") %></div>
 <% } %>

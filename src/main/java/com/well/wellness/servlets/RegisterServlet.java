@@ -1,5 +1,6 @@
 package com.well.wellness.servlets;
 
+import com.well.wellness.servlets.EmailUtil;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -55,9 +56,10 @@ public class RegisterServlet extends HttpServlet {
                 insertStmt.setString(5, phone);
                 insertStmt.setString(6, hashedPassword);
                 insertStmt.executeUpdate();
+                EmailUtil.sendEmail(email, name);
 
                 req.setAttribute("message", "Registration successful. Please login.");
-                req.getRequestDispatcher("index.jsp").forward(req, res);
+                res.sendRedirect("login.jsp?success=true");
             }
         } catch (Exception e) {
             e.printStackTrace();

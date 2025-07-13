@@ -19,7 +19,7 @@ public class DBUtil {
             return DriverManager.getConnection(
                     "jdbc:postgresql://localhost:5432/wellness",
                     "postgres",
-                    "yourpassword"
+                    "SlimShady69"
             );
         } catch (Exception e) {
             System.err.println("DB connection failed: " + e.getMessage());
