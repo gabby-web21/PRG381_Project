@@ -1,11 +1,21 @@
 package com.well.wellness.servlets;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.regex.Pattern;
+
 import org.mindrot.jbcrypt.BCrypt;
+
+
 
 public class RegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
@@ -17,7 +27,6 @@ public class RegisterServlet extends HttpServlet {
         String phone = req.getParameter("phone");
         String password = req.getParameter("password");
 
-        // Field validation
         if (!isValidEmail(email) || !isValidPhone(phone) || password.length() < 6) {
             req.setAttribute("message", "Invalid input: Check email, phone, and password.");
             req.getRequestDispatcher("register.jsp").forward(req, res);
@@ -25,7 +34,6 @@ public class RegisterServlet extends HttpServlet {
         }
 
         try (Connection conn = DBUtil.getConnection()) {
-            // Check if email or student number already exists
             PreparedStatement checkStmt = conn.prepareStatement(
                     "SELECT * FROM users WHERE email = ? OR student_number = ?");
             checkStmt.setString(1, email);
@@ -49,11 +57,12 @@ public class RegisterServlet extends HttpServlet {
                 insertStmt.executeUpdate();
 
                 req.setAttribute("message", "Registration successful. Please login.");
-                req.getRequestDispatcher("login.jsp").forward(req, res);
+                req.getRequestDispatcher("index.jsp").forward(req, res);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            res.sendError(500, "Server error during registration.");
+            req.setAttribute("message", "Server error during registration: " + e.getMessage());
+            req.getRequestDispatcher("register.jsp").forward(req, res);
         }
     }
 

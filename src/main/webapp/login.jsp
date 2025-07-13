@@ -5,6 +5,9 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+<% if (request.getAttribute("message") != null) { %>
+<div style="color: red;"><%= request.getAttribute("message") %></div>
+<% } %>
 <h2>Student Login</h2>
 <form action="login" method="post">
     Email: <input type="email" name="email" required><br>

@@ -5,9 +5,18 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+<%
+    String message = (String) request.getAttribute("message");
+    if (message != null) {
+%>
+<p style="color:red;"><%= message %></p>
+<%
+    }
+%>
+
 <h2>Student Registration</h2>
 <form action="register" method="post">
-    Student Number: <input type="text" name="studentNumber" required><br>
+    Student Number: <input type="text" name="student_number" required><br>
     Name: <input type="text" name="name" required><br>
     Surname: <input type="text" name="surname" required><br>
     Email: <input type="email" name="email" required><br>
