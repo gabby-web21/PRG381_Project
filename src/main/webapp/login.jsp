@@ -16,8 +16,22 @@
     }
 %>
 <% if (request.getAttribute("message") != null) { %>
-<div style="color: red;"><%= request.getAttribute("message") %></div>
+<div class="flash-message">
+    <%= request.getAttribute("message") %>
+</div>
 <% } %>
+<%@ page import="java.net.URLDecoder" %>
+<%
+    String resetParam = request.getParameter("reset");
+    if ("success".equals(resetParam)) {
+%>
+<div style="background-color: #d4edda; color: #155724; padding: 10px; border: 1px solid #c3e6cb; border-radius: 5px; margin: 15px 0;">
+    A temporary password has been sent to your email! Please log in and change it.
+</div>
+<%
+    }
+%>
+
 <h2>Student Login</h2>
 <form action="login" method="post">
     Email: <input type="email" name="email" required><br>
@@ -26,5 +40,6 @@
 </form>
 <a href="register.jsp">New here? Register</a><br>
 <a href="index.jsp">Back to Home</a>
+<a href="forgotPassword.jsp">Forgot Password? Reset it here!</a>
 </body>
 </html>

@@ -34,4 +34,14 @@
     <url-pattern>/logout</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>ForgotPasswordServlet</servlet-name>
+    <servlet-class>com.well.wellness.servlets.ForgotPasswordServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ForgotPasswordServlet</servlet-name>
+    <url-pattern>/forgot-password</url-pattern>
+  </servlet-mapping>
+
+
 </web-app>

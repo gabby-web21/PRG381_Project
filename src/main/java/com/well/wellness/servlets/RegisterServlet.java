@@ -56,7 +56,7 @@ public class RegisterServlet extends HttpServlet {
                 insertStmt.setString(5, phone);
                 insertStmt.setString(6, hashedPassword);
                 insertStmt.executeUpdate();
-                EmailUtil.sendEmail(email, name);
+                EmailUtil.sendEmail(req, email, name);
 
                 req.setAttribute("message", "Registration successful. Please login.");
                 res.sendRedirect("login.jsp?success=true");

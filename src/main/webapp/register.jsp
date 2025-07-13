@@ -5,14 +5,11 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-<%
-    String message = (String) request.getAttribute("message");
-    if (message != null) {
-%>
-<p style="color:red;"><%= message %></p>
-<%
-    }
-%>
+<% if (request.getAttribute("message") != null) { %>
+<div class="flash-message">
+    <%= request.getAttribute("message") %>
+</div>
+<% } %>
 
 <h2>Student Registration</h2>
 <form action="register" method="post">
