@@ -7,14 +7,14 @@
 
   <display-name>BC Student Wellness Management System</display-name>
 
-  
+
   <servlet>
     <servlet-name>RegisterServlet</servlet-name>
     <servlet-class>com.well.wellness.servlets.RegisterServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>RegisterServlet</servlet-name>
-    <url-pattern>/register</url-pattern>
+    <url-pattern>/RegisterServlet</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -23,7 +23,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>LoginServlet</servlet-name>
-    <url-pattern>/login</url-pattern>
+    <url-pattern>/LoginServlet</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -32,7 +32,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>LogoutServlet</servlet-name>
-    <url-pattern>/logout</url-pattern>
+    <url-pattern>/LogoutServlet</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -41,9 +41,26 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>ForgotPasswordServlet</servlet-name>
-    <url-pattern>/forgot-password</url-pattern>
+    <url-pattern>/ForgotPasswordServlet</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>ChangePasswordServlet</servlet-name>
+    <servlet-class>com.well.wellness.servlets.ChangePasswordServlet</servlet-class>
+  </servlet>
 
+  <servlet-mapping>
+    <servlet-name>ChangePasswordServlet</servlet-name>
+    <url-pattern>/ChangePasswordServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>AppointmentBookingServlet</servlet-name>
+    <servlet-class>com.well.wellness.servlets.AppointmentBookingServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AppointmentBookingServlet</servlet-name>
+    <url-pattern>/AppointmentBookingServlet</url-pattern>
+  </servlet-mapping>
 
 </web-app>

@@ -1,7 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - BC Wellness</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -34,21 +36,53 @@
 
 <div class="container">
     <header>
-        <h1>BC Student Wellness</h1>
+        <a href="index.jsp" class="logo">
+            <div class="logo-icon">🧠</div>
+            <h1>BC Student Wellness</h1>
+        </a>
         <nav>
             <a href="index.jsp">Home</a>
             <a href="register.jsp">Register</a>
-            <a href="forgotPassword.jsp">Forgot Password? Reset it here!</a>
         </nav>
     </header>
 
     <main>
-        <section class="hero">
-            <h2>Login</h2>
-            <form method="post" action="<%= request.getContextPath() %>/login">
-                <input type="text" name="email" placeholder="Email" required />
-                <input type="password" name="password" placeholder="Password" required />
-                <button type="submit">Login</button>
+        <section class="auth-card">
+            <div class="auth-header">
+                <h2>Welcome Back</h2>
+                <p>Sign in to continue your wellness journey</p>
+            </div>
+
+            <form action="LoginServlet" method="post" class="auth-form">
+                <% if (request.getAttribute("message") != null) { %>
+                <div class="flash-message flash-error">
+                    <%= request.getAttribute("message") %>
+                </div>
+                <% } %>
+
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+
+                <div class="form-options">
+                    <div class="remember">
+                        <input type="checkbox" id="remember">
+                        <label for="remember">Remember me</label>
+                    </div>
+                    <a href="forgotPassword.jsp">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%;">Sign In</button>
+
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="register.jsp">Register now</a></p>
+                </div>
             </form>
         </section>
     </main>

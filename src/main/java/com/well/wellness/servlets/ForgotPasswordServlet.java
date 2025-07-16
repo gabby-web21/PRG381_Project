@@ -46,12 +46,12 @@ public class ForgotPasswordServlet extends HttpServlet {
                 res.sendRedirect("login.jsp?reset=success");
             } else {
                 req.setAttribute("message", "Email not found.");
-                req.getRequestDispatcher("forgot-password.jsp").forward(req, res);
+                req.getRequestDispatcher("forgotPassword.jsp").forward(req, res);
             }
         } catch (Exception e) {
             e.printStackTrace();
             req.setAttribute("message", "Error: " + e.getMessage());
-            req.getRequestDispatcher("forgot-password.jsp").forward(req, res);
+            req.getRequestDispatcher("forgotPassword.jsp").forward(req, res);
         }
     }
 

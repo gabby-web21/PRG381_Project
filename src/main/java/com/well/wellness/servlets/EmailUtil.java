@@ -78,4 +78,33 @@ public class EmailUtil {
 
         Transport.send(msg);
     }
+
+    public static void sendAppointmentConfirmationEmail(HttpServletRequest request, String toEmail, String name,
+                                                        String date, String time, String concern, String sessionType) throws Exception {
+        Properties configProps = new Properties();
+        InputStream input = EmailUtil.class.getClassLoader().getResourceAsStream("config.properties");
+        if (input == null) throw new Exception("Unable to find config.properties");
+        configProps.load(input);
+
+        Session session = getSession(configProps);
+        String fromEmail = configProps.getProperty("mail.username");
+
+        Message msg = new MimeMessage(session);
+        msg.setFrom(new InternetAddress(fromEmail, "BC Wellness Admin"));
+        msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+        msg.setSubject("Appointment Confirmation - BC Wellness");
+        msg.setText("Dear " + name + ",\n\n" +
+                "Your wellness appointment has been booked successfully.\n\n" +
+                "Date: " + date + "\n" +
+                "Time: " + time + "\n" +
+                "Focus Area: " + concern + "\n" +
+                "Session Type: " + sessionType + "\n\n" +
+                "Thank you for trusting BC Wellness.\n\n" +
+                "Best regards,\n" +
+                "Student Wellness Team");
+        msg.setRecipients(Message.RecipientType.CC,
+                InternetAddress.parse("admin@example.com, counselor@bc.edu"));
+        Transport.send(msg);
+    }
+
 }
