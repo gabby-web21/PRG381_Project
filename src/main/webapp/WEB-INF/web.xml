@@ -7,6 +7,7 @@
 
   <display-name>BC Student Wellness Management System</display-name>
 
+  
   <servlet>
     <servlet-name>RegisterServlet</servlet-name>
     <servlet-class>com.well.wellness.servlets.RegisterServlet</servlet-class>
@@ -42,6 +43,7 @@
     <servlet-name>ForgotPasswordServlet</servlet-name>
     <url-pattern>/forgot-password</url-pattern>
   </servlet-mapping>
+
 
 
 </web-app>

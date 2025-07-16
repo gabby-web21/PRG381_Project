@@ -32,14 +32,30 @@
     }
 %>
 
-<h2>Student Login</h2>
-<form action="login" method="post">
-    Email: <input type="email" name="email" required><br>
-    Password: <input type="password" name="password" required><br>
-    <button type="submit">Login</button>
-</form>
-<a href="register.jsp">New here? Register</a><br>
-<a href="index.jsp">Back to Home</a>
-<a href="forgotPassword.jsp">Forgot Password? Reset it here!</a>
+<div class="container">
+    <header>
+        <h1>BC Student Wellness</h1>
+        <nav>
+            <a href="index.jsp">Home</a>
+            <a href="register.jsp">Register</a>
+            <a href="forgotPassword.jsp">Forgot Password? Reset it here!</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2>Login</h2>
+            <form method="post" action="<%= request.getContextPath() %>/login">
+                <input type="text" name="email" placeholder="Email" required />
+                <input type="password" name="password" placeholder="Password" required />
+                <button type="submit">Login</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 BC Wellness</p>
+    </footer>
+</div>
 </body>
 </html>

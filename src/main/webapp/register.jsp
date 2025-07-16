@@ -10,17 +10,33 @@
     <%= request.getAttribute("message") %>
 </div>
 <% } %>
+<div class="container">
+    <header>
+        <h1>BC Student Wellness</h1>
+        <nav>
+            <a href="index.jsp">Home</a>
+            <a href="login.jsp">Login</a>
+        </nav>
+    </header>
 
-<h2>Student Registration</h2>
-<form action="register" method="post">
-    Student Number: <input type="text" name="student_number" required><br>
-    Name: <input type="text" name="name" required><br>
-    Surname: <input type="text" name="surname" required><br>
-    Email: <input type="email" name="email" required><br>
-    Phone: <input type="text" name="phone" required><br>
-    Password: <input type="password" name="password" required><br>
-    <button type="submit">Register</button>
-</form>
-<a href="index.jsp">Back to Home</a>
+    <main>
+        <section class="hero">
+            <h2>Student Registration</h2>
+            <form method="post" action="<%= request.getContextPath() %>/register">
+                <input type="text" name="student_number" placeholder="Student Number" required><br>
+                <input type="text" name="name" placeholder="Name" required><br>
+                <input type="text" name="surname" placeholder="Surname" required><br>
+                <input type="email" name="email" placeholder="Email" required><br>
+                <input type="text" name="phone" placeholder="Phone" required><br>
+                <input type="password" name="password" placeholder="Password" required><br>
+                <button type="submit">Register</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 BC Wellness</p>
+    </footer>
+</div>
 </body>
 </html>

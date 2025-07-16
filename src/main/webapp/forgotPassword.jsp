@@ -2,11 +2,28 @@
 <html>
 <head><title>Forgot Password</title></head>
 <body>
-<h2>Forgot Your Password?</h2>
-<form action="forgot-password" method="post">
-    Enter your registered email: <input type="email" name="email" required><br>
-    <button type="submit">Send Reset Link</button>
-</form>
-<a href="login.jsp">Back to login</a>
+<div class="container">
+    <header>
+        <h1>BC Student Wellness</h1>
+        <nav>
+            <a href="login.jsp">Login</a>
+            <a href="register.jsp">Register</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2>Forgot Password</h2>
+            <form action="forgot-password" method="post">
+                <input type="email" name="email" placeholder="Enter your email" required />
+                <button type="submit">Reset Password</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 BC Wellness</p>
+    </footer>
+</div>
 </body>
 </html>

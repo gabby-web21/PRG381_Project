@@ -15,7 +15,11 @@
 </head>
 <body>
 <h1>Welcome, <%= studentName %>!</h1>
-<p>You are now logged in to the Student Wellness Management System.</p>
+<section class="hero">
+    <h2>Your Dashboard</h2>
+    <p>You are now logged in to the Student Wellness Management System.</p>
+    <p>Explore wellness services, book appointments, or submit feedback.</p>
+</section>
 <form action="logout" method="post">
     <button type="submit">Logout</button>
 </form>
