@@ -36,72 +36,51 @@ A Java-based web application for managing student wellness registrations and log
 
 ### 2. Setup Steps
 
-#### A. Database Setup (PostgreSQL)
+#### A. Configure Database Connection
+Edit the DBUtil.java file to match your PostgreSQL credentials:
 
-1. Open `psql` or PgAdmin and run the following SQL to create the database and table:
-
-```sql
-CREATE DATABASE wellness;
-
-\c wellness
-
-CREATE TABLE users (
-    student_number VARCHAR(50) PRIMARY KEY,
-    name VARCHAR(100),
-    surname VARCHAR(100),
-    email VARCHAR(100) UNIQUE,
-    phone VARCHAR(15),
-    password TEXT
-);
 ```
-
-2. (Optional) Insert a sample user:
-
-```sql
-INSERT INTO users (student_number, name, surname, email, phone, password)
-VALUES ('600001', 'Test', 'User', 'test@example.com', '0123456789', 'your_hashed_password_here');
-```
-
----
-
-#### B. Update DB Credentials
-
-Open the `DBUtil.java` file and make sure your credentials match your local PostgreSQL setup:
-
-```java
 String url = "jdbc:postgresql://localhost:5432/wellness";
-String username = "postgres"; //your DB user
+String username = "postgres"; // your DB username
 String password = "your_password"; // your DB password
+
 ```
+No need to manually create the users table — it's handled automatically when a user registers.
+
 
 ---
 
-#### C. Build the Project
+#### B. Build the Project
+From the root directory (where pom.xml is located), open a terminal and run:
 
-In the root folder (where `pom.xml` is), run:
-
-```bash
+```
 mvn clean package
 ```
+This will generate a .war file (e.g., PRGPROJTEST.war) in the target/ directory.
 
-This will generate a `.war` file in the `target/` folder.
+
 
 ---
 
-#### D. Deploy to Apache Tomcat
-
-1. Copy the `.war` file (e.g., `PRGPROJTEST.war`) to:
+#### C. Deploy to Apache Tomcat
+Copy the .war file to:
 
 ```
-[Tomcat Folder]/webapps/
+[Your_Tomcat_Directory]/webapps/
 ```
+Start the Tomcat server.
+Open your browser and go to:
 
-2. Start Tomcat.
+```
+http://localhost:8081/PRGPROJTEST/
+```
+Adjust the port if you’ve configured Tomcat differently.
+
 
 3. Open your browser and go to:
 
 ```
-http://localhost:8081/PRGPROJTEST/
+http://localhost:8080/PRGPROJTEST/
 ```
 
 ---
