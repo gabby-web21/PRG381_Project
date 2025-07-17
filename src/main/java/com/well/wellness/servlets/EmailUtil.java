@@ -15,7 +15,8 @@ public class EmailUtil {
 
         Properties props = new Properties();
         props.put("mail.smtp.host", configProps.getProperty("mail.smtp.host"));
-        props.put("mail.smtp.port", configProps.getProperty("mail.smtp.port"));
+        props.put("mail.smtp.port", "587");
+        System.out.println("[EmailUtil] Hardcoded SMTP port: 587");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
 
@@ -25,6 +26,7 @@ public class EmailUtil {
             }
         });
         session.setDebug(true); // Enable JavaMail debug output
+        System.out.println("[EmailUtil] Using SMTP port: " + props.getProperty("mail.smtp.port"));
         return session;
     }
 
@@ -95,20 +97,32 @@ public class EmailUtil {
 
     public static void sendAppointmentConfirmationEmail(HttpServletRequest request, String toEmail, String name,
                                                         String date, String time, String concern, String sessionType) throws Exception {
+        System.out.println("[EmailUtil] Preparing to send appointment confirmation email");
+        System.out.println("[EmailUtil] toEmail: " + toEmail);
+        System.out.println("[EmailUtil] name: " + name);
+        System.out.println("[EmailUtil] date: " + date);
+        System.out.println("[EmailUtil] time: " + time);
+        System.out.println("[EmailUtil] concern: " + concern);
+        System.out.println("[EmailUtil] sessionType: " + sessionType);
         try {
             Properties configProps = new Properties();
             InputStream input = EmailUtil.class.getClassLoader().getResourceAsStream("config.properties");
-            if (input == null) throw new Exception("Unable to find config.properties");
+            if (input == null) {
+                System.err.println("[EmailUtil] Unable to find config.properties");
+                throw new Exception("Unable to find config.properties");
+            }
             configProps.load(input);
-
+            System.out.println("[EmailUtil] Loaded config.properties");
+            String fromEmail = configProps.getProperty("mail.username", "bcwellnessgroup2@gmail.com");
+            String password = configProps.getProperty("mail.password", "fcrf sugx fsar lfyw");
+            System.out.println("[EmailUtil] Using sender email: " + fromEmail);
+            System.out.println("[EmailUtil] Using app password: " + password);
             Session session = getSession(configProps);
-            String fromEmail = configProps.getProperty("mail.username");
-
             Message msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(fromEmail, "BC Wellness Admin"));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
             msg.setSubject("Appointment Confirmation - BC Wellness");
-            msg.setText("Dear " + name + ",\n\n" +
+            String emailBody = "Dear " + name + ",\n\n" +
                     "Your wellness appointment has been booked successfully.\n\n" +
                     "Date: " + date + "\n" +
                     "Time: " + time + "\n" +
@@ -116,13 +130,14 @@ public class EmailUtil {
                     "Session Type: " + sessionType + "\n\n" +
                     "Thank you for trusting BC Wellness.\n\n" +
                     "Best regards,\n" +
-                    "Student Wellness Team");
-            msg.setRecipients(Message.RecipientType.CC,
-                    InternetAddress.parse("admin@example.com, counselor@bc.edu"));
+                    "Student Wellness Team";
+            msg.setText(emailBody);
+            System.out.println("[EmailUtil] Email body:\n" + emailBody);
             Transport.send(msg);
             System.out.println("[EmailUtil] Appointment confirmation email sent successfully to: " + toEmail);
         } catch (Exception e) {
             System.err.println("[EmailUtil] Failed to send appointment confirmation email: " + e.getMessage());
+            e.printStackTrace();
             throw e;
         }
     }

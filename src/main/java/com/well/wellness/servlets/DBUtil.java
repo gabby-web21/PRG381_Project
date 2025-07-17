@@ -15,7 +15,7 @@ import org.mindrot.jbcrypt.BCrypt;
 public class DBUtil {
     private static final String URL = "jdbc:postgresql://localhost:5432/wellness";
     private static final String USER = "postgres";
-    private static final String PASSWORD = "SlimShady69";
+    private static final String PASSWORD = "admin";
 
     public static Connection getConnection() {
         try {

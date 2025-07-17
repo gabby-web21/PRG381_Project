@@ -1,11 +1,33 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-HttpSession session2 = request.getSession(false);
-if (session2 == null || session2.getAttribute("student_name") == null) {
-response.sendRedirect("login.jsp");
-return;
-}
-String studentName = (String) session2.getAttribute("student_name");
+    String bookingMessage = null;
+    String confDate = null;
+    String confTime = null;
+    String confConcern = null;
+    String confType = null;
+    String confLocation = null;
+    HttpSession session2 = request.getSession(false);
+    String studentName = null;
+    if (session2 != null) {
+        studentName = (String) session2.getAttribute("student_name");
+        bookingMessage = (String) session2.getAttribute("bookingMessage");
+        confDate = (String) session2.getAttribute("confDate");
+        confTime = (String) session2.getAttribute("confTime");
+        confConcern = (String) session2.getAttribute("confConcern");
+        confType = (String) session2.getAttribute("confType");
+        confLocation = (String) session2.getAttribute("confLocation");
+        // Remove after displaying so it doesn't persist
+        session2.removeAttribute("bookingMessage");
+        session2.removeAttribute("confDate");
+        session2.removeAttribute("confTime");
+        session2.removeAttribute("confConcern");
+        session2.removeAttribute("confType");
+        session2.removeAttribute("confLocation");
+    }
+    if (studentName == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
 %>
 <% if (request.getAttribute("passwordMessage") != null) { %>
 <div class="flash-message success">
@@ -116,21 +138,19 @@ String studentName = (String) session2.getAttribute("student_name");
         </div>
 
         <!-- Confirmation Card -->
-        <div id="confirmation-card" class="confirmation-card">
+        <div id="confirmation-card" class="confirmation-card" style="display:none;">
             <div class="confirmation-icon">✓</div>
             <h3>Appointment Confirmed!</h3>
             <p>Your wellness session has been successfully scheduled.</p>
-
             <div class="confirmation-details">
-                <p><span>Date:</span> <span id="conf-date">Monday, July 21, 2025</span></p>
-                <p><span>Time:</span> <span id="conf-time">10:30 AM</span></p>
-                <p><span>Focus Area:</span> <span id="conf-concern">General Wellness Check-in</span></p>
-                <p><span>Session Type:</span> <span id="conf-type">In-Person</span></p>
-                <p><span>Location:</span> <span id="conf-location">Wellness Center, Room 205</span></p>
+                <p><span>Date:</span> <span id="conf-date"><%= confDate != null ? confDate : "" %></span></p>
+                <p><span>Time:</span> <span id="conf-time"><%= confTime != null ? confTime : "" %></span></p>
+                <p><span>Focus Area:</span> <span id="conf-concern"><%= confConcern != null ? confConcern : "" %></span></p>
+                <p><span>Session Type:</span> <span id="conf-type"><%= confType != null ? confType : "" %></span></p>
+                <p><span>Location:</span> <span id="conf-location"><%= confLocation != null ? confLocation : "" %></span></p>
             </div>
-
             <p>We've sent a confirmation email with these details to your student email address.</p>
-            <button id="new-booking-btn" class="btn btn-outline btn-large">Book Another Session</button>
+            <button id="new-booking-btn" class="btn btn-outline btn-large" onclick="window.location.reload()">Book Another Session</button>
         </div>
     </main>
 </div>
@@ -186,41 +206,56 @@ String studentName = (String) session2.getAttribute("student_name");
         const confirmationCard = document.getElementById('confirmation-card');
         const newBookingBtn = document.getElementById('new-booking-btn');
 
-        // Format date for display
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            return date.toLocaleDateString('en-US', options);
-        }
-
-        // Handle form submission
         form.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // Get form values
+            // Get form values BEFORE hiding the form
             const date = document.getElementById('appointment-date').value;
             const time = document.getElementById('appointment-time').value;
-            const concern = document.getElementById('concern-type').options[document.getElementById('concern-type').selectedIndex].text;
-            const sessionType = document.getElementById('session-type').options[document.getElementById('session-type').selectedIndex].text;
+            const concernSelect = document.getElementById('concern-type');
+            const concern = concernSelect.options[concernSelect.selectedIndex].text;
+            const concernValue = concernSelect.value;
+            const sessionTypeSelect = document.getElementById('session-type');
+            const sessionType = sessionTypeSelect.options[sessionTypeSelect.selectedIndex].text;
+            const sessionTypeValue = sessionTypeSelect.value;
+            const requests = document.getElementById('special-requests').value;
 
             // Set confirmation details
-            document.getElementById('conf-date').textContent = formatDate(date);
+            document.getElementById('conf-date').textContent = date;
             document.getElementById('conf-time').textContent = time;
             document.getElementById('conf-concern').textContent = concern;
             document.getElementById('conf-type').textContent = sessionType;
-
-            // Determine location based on session type
-            const location = sessionType === 'In-Person' ?
-                'Wellness Center, Room 205' :
-                'Video/Phone link will be emailed to you';
-            document.getElementById('conf-location').textContent = location;
+            document.getElementById('conf-location').textContent = sessionTypeValue === 'in-person'
+                ? 'Wellness Center, Room 205'
+                : 'Video/Phone link will be emailed to you';
 
             // Show confirmation
             form.closest('.booking-card').style.display = 'none';
             confirmationCard.style.display = 'block';
+
+            // Send data to servlet via AJAX as URL-encoded
+            const params = new URLSearchParams();
+            params.append('date', date);
+            params.append('time', time);
+            params.append('concern', concern);
+            params.append('concernValue', concernValue);
+            params.append('session-type', sessionType);
+            params.append('sessionTypeValue', sessionTypeValue);
+            params.append('requests', requests);
+
+            fetch('AppointmentBookingServlet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params.toString()
+            }).then(response => {
+                // Optionally handle response
+            }).catch(error => {
+                alert('There was an error booking your appointment. Please try again.');
+            });
         });
 
-        // Handle new booking button
         newBookingBtn.addEventListener('click', function() {
             confirmationCard.style.display = 'none';
             form.closest('.booking-card').style.display = 'block';
