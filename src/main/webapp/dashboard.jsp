@@ -1,11 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    HttpSession session2 = request.getSession(false);
-    if (session2 == null || session2.getAttribute("student_name") == null) {
-        response.sendRedirect("login.jsp");
-        return;
-    }
-    String studentName = (String) session2.getAttribute("student_name");
+HttpSession session2 = request.getSession(false);
+if (session2 == null || session2.getAttribute("student_name") == null) {
+response.sendRedirect("login.jsp");
+return;
+}
+String studentName = (String) session2.getAttribute("student_name");
 %>
 <% if (request.getAttribute("passwordMessage") != null) { %>
 <div class="flash-message success">
@@ -63,7 +63,7 @@
 
             <form id="appointment-form" class="booking-form" action="AppointmentBookingServlet" method="post">
 
-            <div class="form-row">
+                <div class="form-row">
                     <div class="input-group">
                         <label for="appointment-date">Preferred Date</label>
                         <input type="date" id="appointment-date" name="date" required min="<%= new java.util.Date().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate().plusDays(1).toString() %>">
@@ -135,30 +135,42 @@
     </main>
 </div>
 
-<!-- Password Update Section -->
-<section class="password-update-card">
-    <h3>Change Your Password</h3>
-    <form action="ChangePasswordServlet" method="post" class="change-password-form" id="change-password-form">
+<!-- NEW PASSWORD UPDATE SECTION -->
+<div class="password-card">
+    <div class="auth-header">
+        <h3>Account Security</h3>
+    </div>
+
+    <div class="password-toggle" id="passwordToggle">
+        <span>Change Password</span>
+        <span class="password-toggle-icon">▼</span>
+    </div>
+
+    <form action="ChangePasswordServlet" method="post" class="password-form" id="change-password-form">
         <div class="input-group">
             <label for="currentPassword">Current Password</label>
             <input type="password" id="currentPassword" name="currentPassword" required>
         </div>
 
-        <div id="newPasswordFields" style="display:none;">
-            <div class="input-group">
-                <label for="newPassword">New Password</label>
-                <input type="password" id="newPassword" name="newPassword">
-            </div>
-            <div class="input-group">
-                <label for="confirmPassword">Confirm New Password</label>
-                <input type="password" id="confirmPassword" name="confirmPassword">
+        <div class="input-group">
+            <label for="newPassword">New Password</label>
+            <input type="password" id="newPassword" name="newPassword" required>
+            <div id="password-strength" class="password-strength">
+                <div class="strength-meter">
+                    <div class="strength-meter-fill"></div>
+                </div>
+                <p class="strength-text">Password strength: Weak</p>
             </div>
         </div>
 
-        <button type="submit" id="togglePasswordBtn" class="btn btn-primary" style="width: 100%;">Update Password</button>
-    </form>
-</section>
+        <div class="input-group">
+            <label for="confirmPassword">Confirm New Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+        </div>
 
+        <button type="submit" class="btn btn-primary">Update Password</button>
+    </form>
+</div>
 
 <footer>
     <p>&copy; 2025 BC Wellness</p>
@@ -169,7 +181,6 @@
     </div>
 </footer>
 <script>
-
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('appointment-form');
         const confirmationCard = document.getElementById('confirmation-card');
@@ -226,47 +237,81 @@
         const yyyy = tomorrow.getFullYear();
 
         document.getElementById('appointment-date').min = `${yyyy}-${mm}-${dd}`;
-    });
 
-    // Password update form logic
-    document.addEventListener('DOMContentLoaded', function () {
-        const newPasswordFields = document.getElementById('newPasswordFields');
-        const currentPassword = document.getElementById('currentPassword');
+        // NEW PASSWORD UPDATE FUNCTIONALITY
+        const passwordToggle = document.getElementById('passwordToggle');
+        const passwordForm = document.getElementById('change-password-form');
+        const toggleIcon = document.querySelector('.password-toggle-icon');
+
+        passwordToggle.addEventListener('click', function() {
+            passwordForm.classList.toggle('expanded');
+            toggleIcon.textContent = passwordForm.classList.contains('expanded') ? '▲' : '▼';
+        });
+
+        // Password strength meter for update password (same as register)
         const newPasswordInput = document.getElementById('newPassword');
-        const confirmPasswordInput = document.getElementById('confirmPassword');
-        const form = document.getElementById('change-password-form');
-        const toggleBtn = document.getElementById('togglePasswordBtn');
+        const strengthMeter = document.querySelector('.strength-meter-fill');
+        const strengthText = document.querySelector('.strength-text');
+        const passwordStrength = document.getElementById('password-strength');
 
-        let fieldsVisible = false;
+        newPasswordInput.addEventListener('input', function() {
+            const password = newPasswordInput.value;
+            const strength = calculatePasswordStrength(password);
 
-        toggleBtn.addEventListener('click', function () {
-            if (!fieldsVisible) {
-                // Reveal fields
-                newPasswordFields.style.display = 'block';
-                newPasswordInput.setAttribute('required', 'required');
-                confirmPasswordInput.setAttribute('required', 'required');
+            // Update strength meter
+            passwordStrength.style.display = 'block';
+            strengthMeter.style.width = strength.percentage + '%';
+            strengthMeter.style.backgroundColor = strength.color;
+            strengthText.textContent = 'Password strength: ' + strength.text;
+            strengthText.style.color = strength.color;
+        });
 
-                // Change button label
-                toggleBtn.textContent = 'Confirm Update';
-                fieldsVisible = true;
-            } else {
-                // Validate and submit
-                if (currentPassword.value.trim() === '') {
-                    alert("Please enter your current password.");
-                    currentPassword.focus();
-                    return;
-                }
+        function calculatePasswordStrength(password) {
+            let strength = 0;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasNumbers = /\d/.test(password);
+            const hasSpecial = /[^A-Za-z0-9]/.test(password);
+            const isLong = password.length >= 8;
 
-                if (newPasswordInput.value !== confirmPasswordInput.value) {
-                    alert("New passwords do not match.");
-                    confirmPasswordInput.focus();
-                    return;
-                }
+            if (hasUpperCase) strength += 20;
+            if (hasLowerCase) strength += 20;
+            if (hasNumbers) strength += 20;
+            if (hasSpecial) strength += 20;
+            if (isLong) strength += 20;
+
+            let result = {
+                percentage: strength,
+                color: '#ff4d4d',
+                text: 'Weak'
+            };
+
+            if (strength >= 80) {
+                result.color = '#4CAF50';
+                result.text = 'Strong';
+            } else if (strength >= 60) {
+                result.color = '#FFC107';
+                result.text = 'Medium';
+            } else if (strength >= 40) {
+                result.color = '#FF9800';
+                result.text = 'Fair';
+            }
+
+            return result;
+        }
+
+        // Password validation
+        document.getElementById('change-password-form').addEventListener('submit', function(e) {
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+
+            if (newPass !== confirmPass) {
+                e.preventDefault();
+                alert('New passwords do not match!');
+                document.getElementById('confirmPassword').focus();
             }
         });
     });
-
-
 </script>
 </body>
 </html>
