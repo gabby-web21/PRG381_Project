@@ -1,6 +1,6 @@
 # BC Student Wellness Management System
 
-A Java-based web application for managing student wellness registrations and logins.
+A Java-based web application that allows students to register and log in to access mental wellness services.
 
 ---
 
@@ -9,16 +9,17 @@ A Java-based web application for managing student wellness registrations and log
 - **Backend:** Java Servlets (Maven project)
 - **Frontend:** JSP (JavaServer Pages)
 - **Database:** PostgreSQL
-- **Server:** Apache Tomcat (Tested on 9.0.x)
+- **Server:** Apache Tomcat (Tested on version 9.0.x)
 
 ---
 
 ## Features
 
-- Student registration (with validation & password hashing using BCrypt)
-- Login with session tracking
+- Student registration with validation
+- Secure password storage using BCrypt
+- Login system with session tracking
 - Logout functionality
-- Basic dashboard for authenticated users
+- Authenticated user dashboard
 
 ---
 
@@ -26,56 +27,74 @@ A Java-based web application for managing student wellness registrations and log
 
 ### 1. Requirements
 
-- Java 17+
-- Apache Tomcat 9+
-- PostgreSQL 13+ (or any version)
+- Java 17 or later
+- Apache Tomcat 9 or later
+- PostgreSQL 13 or later
 - Maven
-- Any IDE (e.g. IntelliJ Community (what we used))
+- Any Java IDE (e.g., IntelliJ IDEA Community Edition)
 
 ---
 
-### 2. Setup Steps
+### 2. Setup Instructions
 
-#### A. Configure Database Connection
-Edit the DBUtil.java file to match your PostgreSQL credentials:
+#### A. Create the PostgreSQL Database
+
+1. Open your SQL Shell(psql).
+2. Create a new database named:
 
 ```
+wellness
+```
+
+3. You can let the application create the necessary tables automatically.  
+   However, if you prefer to create the `users` table manually, use this SQL:
+
+```sql
+CREATE TABLE IF NOT EXISTS users (
+    student_number VARCHAR(10) PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    surname VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    password TEXT NOT NULL
+);
+```
+
+> Note: The `appointments` table will also be auto-created in the latest version.
+
+#### B. Configure Database Credentials
+
+Update the `DBUtil.java` file with your PostgreSQL credentials:
+
+```java
 String url = "jdbc:postgresql://localhost:5432/wellness";
-String username = "postgres"; // your DB username
-String password = "your_password"; // your DB password
-
+String username = "postgres"; // your PostgreSQL username
+String password = "your_password"; // your PostgreSQL password
 ```
-No need to manually create the users table — it's handled automatically when a user registers.
-
 
 ---
 
-#### B. Build the Project
-From the root directory (where pom.xml is located), open a terminal and run:
+#### C. Build the Project
 
-```
+From the root of the project (where `pom.xml` is located), run the following Maven command:
+
+```bash
 mvn clean package
 ```
-This will generate a .war file (e.g., PRGPROJTEST.war) in the target/ directory.
 
-
+This generates a `.war` file (e.g., `PRGPROJTEST.war`) inside the `target/` directory.
 
 ---
 
-#### C. Deploy to Apache Tomcat
-Copy the .war file to:
+#### D. Deploy to Tomcat
+
+1. Copy the generated `.war` file to the `webapps/` directory of your Apache Tomcat installation:
 
 ```
-[Your_Tomcat_Directory]/webapps/
+[Tomcat_Directory]/webapps/
 ```
-Start the Tomcat server.
-Open your browser and go to:
 
-```
-http://localhost:8081/PRGPROJTEST/
-```
-Adjust the port if you’ve configured Tomcat differently.
-
+2. Start the Tomcat server.
 
 3. Open your browser and go to:
 
@@ -83,38 +102,43 @@ Adjust the port if you’ve configured Tomcat differently.
 http://localhost:8080/PRGPROJTEST/
 ```
 
+> Adjust the port number if your Tomcat is configured differently.
+
 ---
 
 ## Login Credentials
 
-If no user exists, register using the `register.jsp` form.
+You can register a new user using the `register.jsp` page.
 
-Otherwise, use:
-
-- **Email:** test@example.com
-- **Password:** (the password you added via SQL)
+To test manually with SQL, insert a user record into the `users` table and use the matching email and password to log in.
 
 ---
 
 ## Testing Pages
 
-- `/index.jsp`: Home page
-- `/register.jsp`: Register new user
-- `/login.jsp`: Login form
-- `/dashboard.jsp`: Protected dashboard (only visible after login)
-- `/logout`: Logout servlet (invalidates session)
+| Page              | Description                              |
+|-------------------|------------------------------------------|
+| `/index.jsp`      | Home page with navigation                |
+| `/register.jsp`   | Student registration form                |
+| `/login.jsp`      | Login form                               |
+| `/dashboard.jsp`  | User dashboard (after login)             |
+| `/logout`         | Logout servlet (clears session)          |
 
 ---
 
 ## Common Errors & Fixes
 
-| Error | Fix |
-|-------|-----|
-| "No suitable driver" | Ensure PostgreSQL JDBC driver is in your `pom.xml` |
-| HTTP 404 on `/login` or `/register` | Check your `web.xml` servlet mappings |
-| Server error (HTTP 500) | Verify DB connection and correct credentials in `DBUtil.java` |
+| Error Message                   | Fix                                                         |
+|--------------------------------|--------------------------------------------------------------|
+| "No suitable driver"           | Ensure PostgreSQL JDBC driver is included in `pom.xml`      |
+| HTTP 404 on `/login` or `/register` | Check servlet mappings in `web.xml`                   |
+| HTTP 500 (Server Error)        | Verify database connection and credentials in `DBUtil.java` |
 
 ---
 
 ## Credits
-Done By: Gabriella Petersen & Luqmaan Slarmie
+
+Project developed by:
+
+- Gabriella Petersen  
+- Luqmaan Slarmie
