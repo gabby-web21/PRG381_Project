@@ -9,8 +9,10 @@ import java.sql.ResultSet;
 
 public class AppointmentBookingServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        System.out.println("[AppointmentBookingServlet] doPost triggered");
         HttpSession session = req.getSession(false);
         if(session == null || session.getAttribute("student_number") == null) {
+            System.out.println("[AppointmentBookingServlet] No session or student_number, redirecting to login.jsp");
             res.sendRedirect("login.jsp");
             return;
         }
@@ -20,42 +22,62 @@ public class AppointmentBookingServlet extends HttpServlet {
 
         String date = req.getParameter("date");
         String time = req.getParameter("time");
-        String concern = req.getParameter("concern");
-        String sessionType = req.getParameter("session-type");
+        String concern = req.getParameter("concern"); // display text
+        String concernValue = req.getParameter("concernValue"); // value
+        String sessionType = req.getParameter("session-type"); // display text
+        String sessionTypeValue = req.getParameter("sessionTypeValue"); // value
         String requests = req.getParameter("requests");
 
+        System.out.println("[DEBUG] Received from AJAX:");
+        System.out.println("date=" + date);
+        System.out.println("time=" + time);
+        System.out.println("concern=" + concern);
+        System.out.println("concernValue=" + concernValue);
+        System.out.println("sessionType=" + sessionType);
+        System.out.println("sessionTypeValue=" + sessionTypeValue);
+        System.out.println("requests=" + requests);
+
+        boolean dbSuccess = false;
         // Save appointment to DB if you want (optional)
         try (Connection conn = DBUtil.getConnection()) {
             PreparedStatement ps = conn.prepareStatement("INSERT INTO appointments (student_number, date, time, concern, session_type, requests) VALUES (?, ?, ?, ?, ?, ?)");
             ps.setString(1, studentNumber);
             ps.setString(2, date);
             ps.setString(3, time);
-            ps.setString(4, concern);
-            ps.setString(5, sessionType);
+            ps.setString(4, concern); // store display text
+            ps.setString(5, sessionType); // store display text
             ps.setString(6, requests);
             ps.executeUpdate();
+            dbSuccess = true;
+            System.out.println("[AppointmentBookingServlet] Appointment saved to DB for student: " + studentNumber);
         } catch(Exception e) {
+            System.err.println("[AppointmentBookingServlet] Error saving appointment: " + e.getMessage());
             e.printStackTrace();
             req.setAttribute("bookingMessage", "Error saving appointment.");
-            req.getRequestDispatcher("dashboard.jsp").forward(req, res);
-            return;
+            // Don't return here; still attempt to send email
         }
 
-        // Send confirmation email
+        // Send confirmation email (always attempt)
         try {
             String toEmail = getEmailByStudentNumber(studentNumber); // implement method to get email from DB
+            System.out.println("[AppointmentBookingServlet] Sending confirmation email to: " + toEmail);
             EmailUtil.sendAppointmentConfirmationEmail(req, toEmail, studentName, date, time, concern, sessionType);
+            System.out.println("[AppointmentBookingServlet] Confirmation email sent to: " + toEmail);
         } catch (Exception e) {
+            System.err.println("[AppointmentBookingServlet] Failed to send confirmation email: " + e.getMessage());
             e.printStackTrace();
             req.setAttribute("bookingMessage", "Failed to send confirmation email.");
-            req.getRequestDispatcher("dashboard.jsp").forward(req, res);
-            return;
+            // Don't return here; allow redirect to dashboard
         }
 
-        HttpSession session2 = req.getSession();
-        session2.setAttribute("bookingMessage", "Appointment booked successfully!");
-        res.sendRedirect("dashboard.jsp");
-
+        if (dbSuccess) {
+            // Optionally log or handle success
+        } else {
+            // Optionally log or handle failure
+        }
+        res.setContentType("application/json");
+        res.getWriter().write("{\"status\":\"ok\"}");
+        // Do not redirect
     }
 
     // Add method to fetch email by student number
